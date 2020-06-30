@@ -22,13 +22,15 @@ const apiRootUrl = 'https://auth.nuid.io';
  * for every invocation. Therefore, it can be rerun to generate inputs to
  * this function that will not result in a `409`.
  */
-function postCredential(apiKey, proof) {
+function postCredential(apiKey, verifiable) {
   let headers = {
     'X-API-Key': apiKey,
     'Content-Type': 'application/json'
   };
 
-  let body = JSON.stringify(proof);
+  let body = JSON.stringify({
+    'nuid.credential/verified': verifiable
+  });
 
   let opts = {
     method: 'POST',
@@ -92,7 +94,9 @@ function postChallenge(apiKey, credential) {
     'Content-Type': 'application/json'
   };
 
-  let body = JSON.stringify(credential);
+  let body = JSON.stringify({
+    'nuid/credential': credential
+  });
 
   let opts = {
     method: 'POST',
@@ -117,13 +121,16 @@ function postChallenge(apiKey, credential) {
  * support for OAuth, OIDC, and other standards-based protocols are on the
  * immediate roadmap.
  */
-function postVerify(apiKey, {c, s}, jwt) {
+function postVerify(apiKey, proof, jwt) {
   let headers = {
     'X-API-Key': apiKey,
     'Content-Type': 'application/json'
   };
 
-  let body = JSON.stringify({c: c, s: s, jwt: jwt});
+  let body = JSON.stringify({
+    'nuid.credential.challenge/jwt': jwt,
+    'nuid.credential/proof': proof
+  });
 
   let opts = {
     method: 'POST',
@@ -162,7 +169,7 @@ function postVerify(apiKey, {c, s}, jwt) {
  * 2. proof derivation occurs on the client, using the `password` <input> value
  *    as the input secret
  * 3. the client POSTs the derived proof to the authenticating server
- * 4. the authenticating server verifies the proof and proceeds appropriately 
+ * 4. the authenticating server verifies the proof and proceeds appropriately
  *
  * The NuID Auth API and the `@nuid/zk` package are meant to make this type of
  * extensible, secure, developer friendly authentication flow easy to implement.
@@ -172,11 +179,11 @@ function postVerify(apiKey, {c, s}, jwt) {
  * this interoperability.
  */
 async function example(apiKey, secret = 'testSecret123') {
-  console.log('Deriving proof from secret...');
-  let postCredentialProof = Zk.proofFromSecret(secret);
+  console.log('Deriving proof from secret and self-issued challenge...');
+  let postCredentialVerifiable = Zk.verifiableFromSecret(secret);
 
-  console.log(`POSTing proof to ${apiRootUrl}/credential to register new credential...`);
-  let postCredentialResponse = await postCredential(apiKey, postCredentialProof);
+  console.log(`POSTing proof and challenge to ${apiRootUrl}/credential to register new credential...`);
+  let postCredentialResponse = await postCredential(apiKey, postCredentialVerifiable);
   let postCredentialResponseBody = await postCredentialResponse.json();
 
   console.log('Extracting persistent credential identifier from response...');
@@ -186,16 +193,20 @@ async function example(apiKey, secret = 'testSecret123') {
   let getCredentialResponse = await getCredential(apiKey, id);
   let getCredentialResponseBody = await getCredentialResponse.json();
 
+  // NOTE: `getCredentialResponseBody` could be `POST`'ed to `/challenge` directly
+  console.log('Extracting credential from response...');
+  let postChallengeCredential = getCredentialResponseBody['nuid/credential'];
+
   console.log(`POSTing public credential data to ${apiRootUrl}/challenge to create a challenge...`);
-  let postChallengeResponse = await postChallenge(apiKey, getCredentialResponseBody);
+  let postChallengeResponse = await postChallenge(apiKey, postChallengeCredential);
   let postChallengeResponseBody = await postChallengeResponse.json();
 
   console.log('Extracting challenge from JWT...');
-  let jwt = postChallengeResponseBody.jwt;
+  let jwt = postChallengeResponseBody['nuid.credential.challenge/jwt'];
   let challenge = decodeJwtPayload(jwt);
 
-  console.log('Deriving proof from challenge and secret...');
-  let postVerifyProof = Zk.proofFromSecret(challenge, secret);
+  console.log('Deriving proof from secret and server-issued challenge...');
+  let postVerifyProof = Zk.proofFromSecretAndChallenge(secret, challenge);
 
   console.log(`POSTing proof and JWT to ${apiRootUrl}/challenge/verify to verify proof...`);
   let postVerifyResponse = await postVerify(apiKey, postVerifyProof, jwt);

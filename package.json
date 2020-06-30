@@ -13,7 +13,7 @@
   "author": "dev@nuid.io",
   "license": "MIT",
   "dependencies": {
-    "@nuid/zk": "0.0.12",
+    "@nuid/zk": "0.1.0",
     "node-fetch": "^2.6.0"
   }
 }

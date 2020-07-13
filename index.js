@@ -11,16 +11,13 @@ const apiRootUrl = 'https://auth.nuid.io';
  *****************************/
 
 /**
- * `postCredential` creates a new credential and ultimately registers
- * the new credential to Ethereum's Rinkeby test network. In the future,
- * developers will have control over how credentials are routed and stored.
+ * `postCredential` creates a new credential and ultimately registers the new
+ * credential to Ethereum's Rinkeby test network. In the future, developers will
+ * have control over how credentials are routed and stored.
  *
- * NOTE: Registering the same proof twice will result in a `HTTP 409
- * conflict` response.
- *
- * NOTE: Single-arity `Zk.proofFromSecret` generates a unique credential
- * for every invocation. Therefore, it can be rerun to generate inputs to
- * this function that will not result in a `409`.
+ * NOTE: Single-arity `Zk.proofFromSecret` generates a unique credential for
+ * every invocation. Therefore, it can be rerun to generate inputs to this
+ * function.
  */
 function postCredential(apiKey, verifiable) {
   let headers = {
@@ -47,16 +44,16 @@ function postCredential(apiKey, verifiable) {
  *************************************/
 
 /**
- * `getCredential` retrieves public credential data by its persistent
- * identifier derived at creation and contained in the response of
- * `postCredential`. The identifier is simply an encoded public key.
+ * `getCredential` retrieves public credential data by its persistent identifier
+ * derived at creation and contained in the response of `postCredential`. The
+ * identifier is simply an encoded public key.
  *
- * NOTE: Public credential data can also be retrieved by alternative
- * addresses, such as a ledger transaction id, IPFS hash, torrent address,
- * etc.. The NuID Auth API aims to give these persistence facilities a
- * unified interface to facilitate easy retrieval for developers. The data
- * itself can of course be retrieved directly from any persistence
- * abstraction with public read semantics.
+ * NOTE: Public credential data can also be retrieved by alternative addresses,
+ * such as a ledger transaction id, IPFS hash, torrent address, etc.. The NuID
+ * Auth API aims to give these persistence facilities a unified interface to
+ * facilitate easy retrieval for developers. Credential data can also be
+ * retrieved directly from any persistence abstraction with public read
+ * semantics.
  */
 function getCredential(apiKey, id) {
   let headers = {
@@ -78,12 +75,12 @@ function getCredential(apiKey, id) {
  **********************************/
 
 /**
- * `postChallenge` can be used to issue a short-lived challenge
- * against public credential data. The challenge is then used to create a
- * stateless authentication flow for persistent, cross-service identities.
+ * `postChallenge` can be used to issue a short-lived challenge against public
+ * credential data. The challenge is then used to create a stateless
+ * authentication flow for persistent, cross-service identities.
  *
- * NOTE: This endpoint considers any well-formed credential valid input.
- * The credential needn't be registered through the NuID Auth API, e.g. using
+ * NOTE: This endpoint considers any well-formed credential valid input. The
+ * credential needn't be registered through the NuID Auth API, e.g. using
  * `postCredential`, and needn't be persisted. This allows the `/challenge`
  * endpoint to serve OTP and ephemeral identity use-cases in addition to
  * traditional login.
@@ -114,8 +111,8 @@ function postChallenge(apiKey, credential) {
 
 /**
  * `postVerify` is used to verify a proof derived from a given challenge. The
- * endpoint expects valid proof data (`{c, s}`, in this case), as well as a
- * JWT as received from `POST /challenge`.
+ * endpoint expects valid proof data, as well as a JWT as received from `POST
+ * /challenge`.
  *
  * NOTE: Currently, the NuID Auth API supports a JWT-based flow, but in-built
  * support for OAuth, OIDC, and other standards-based protocols are on the

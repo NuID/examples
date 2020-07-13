@@ -2,7 +2,11 @@
 
 # NuID :: [Node.js](https://nodejs.org/) example
 
-This repository contains a heavily distilled and heavily documented demonstration of using the [`@nuid/zk`](https://www.npmjs.com/package/@nuid/zk) package in Node.js to interact with NuID's Auth API. The functions found in [`index.js`](./index.js) are illustrative examples of the documentation found at NuID's [Developer Portal](https://portal.nuid.io).
+This repository contains a distilled and documented demonstration of using the
+[`@nuid/zk`](https://www.npmjs.com/package/@nuid/zk) package in Node.js to
+interact with NuID's Auth API. The functions found in [`index.js`](./index.js)
+are illustrative examples of the documentation found at NuID's [Developer
+Portal](https://portal.nuid.io).
 
 ## Prerequisites
 
@@ -23,8 +27,13 @@ $ node
 
 ## Documentation
 
-The code has been commented, but more documentation can be found by registering for an API Key and reading the documentation in the [portal](https://portal.nuid.io). We will be publishing prettier and better in every way documentation over the coming months. And always feel welcome to [reach out](mailto:dev@nuid.io) with any questions that arise.
+The code has been commented, but more documentation can be found by registering
+for an API Key and reading the documentation in the
+[portal](https://portal.nuid.io). We will be publishing prettier and better in
+every way documentation over the coming months. And always feel welcome to
+[reach out](mailto:support@nuid.io) with any questions that arise.
 
 ## Contact
 
-[Get in touch](mailto:dev@nuid.io) with any questions or feedback at [dev@nuid.io](dev@nuid.io). We'd love to hear from you.
+[Get in touch](mailto:support@nuid.io) with any questions or feedback at
+[support@nuid.io](support@nuid.io). We'd love to hear from you.

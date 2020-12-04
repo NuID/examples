@@ -1,4 +1,3 @@
-import './app.css'
 import React from 'react'
 import * as R from 'ramda'
 import {
@@ -8,10 +7,13 @@ import {
   Route,
   Switch
 } from "react-router-dom"
+import 'fontsource-roboto'
+
 import Dashboard from './page/dashboard'
 import Login from './page/login'
 import Logout from './page/logout'
 import Register from './page/register'
+
 
 const ROUTES = {
   authenticated: [

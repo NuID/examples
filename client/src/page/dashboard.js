@@ -26,10 +26,15 @@ const DashboardPage = props => {
       <Paper className={props.classes.paper}>
         <Typography variant='h3'>Account</Typography>
         <p>
-          Name: {props.currentUser.firstName} {props.currentUser.lastName}
+          <strong>Name:</strong> {props.currentUser.firstName}{' '}
+          {props.currentUser.lastName}
         </p>
-        <p>Email: {props.currentUser.email}</p>
-        <p>Account Created: {props.currentUser.createdAt}</p>
+        <p>
+          <strong>Email:</strong> {props.currentUser.email}
+        </p>
+        <p>
+          <strong>Account Created:</strong> {props.currentUser.createdAt}
+        </p>
       </Paper>
     </div>
   )

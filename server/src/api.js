@@ -1,20 +1,27 @@
 const express = require('express')
 const R = require('ramda')
+const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const { User } = require('./user')
 
-const hash256 = R.identity
-const sanitizeEmail = R.compose(R.toLower, R.trim)
+const sha256digest = data =>
+  crypto
+    .createHash('sha256')
+    .update(data, 'utf8')
+    .digest('hex')
 
-const handleError = R.curry((res, err) => {
+const sanitizeEmail = R.compose(R.toLower, R.trim)
+const sanitizeUser = R.omit(['password'])
+
+const handleError = R.curry((res, status, err) => {
   console.error(err)
-  res.sendStatus(500)
+  res.sendStatus(status)
 })
 
 const app = express()
 app.use(bodyParser.json())
-app.use((err, req, res, next) => handleError(res, err))
+app.use((err, req, res, next) => handleError(res, 500, err))
 app.use(
   cors({
     origin: 'http://localhost:3000',
@@ -23,40 +30,38 @@ app.use(
   })
 )
 
-app.post('/login', (req, res) => {
-  console.log(req.body)
-  const where = R.pipe(
-    R.pick(['email', 'password']),
-    R.evolve({ email: sanitizeEmail, password: hash256 })
-  )(req.body)
+app.post('/login', ({ body }, res) => {
+  const where = {
+    email: sanitizeEmail(body.email),
+    password: sha256digest(body.password)
+  }
 
   if (R.isEmpty(where.email) || R.isEmpty(where.password)) {
-    return res.status(401).json({ errors: ['Not Authorized'] })
+    return res.status(401).json({ errors: ['Unauthorized'] })
   }
 
   User.findOne({ where })
     .then(user =>
       user
-        ? res.status(200).json({ user })
-        : res.status(401).json({ errors: ['Not Authorized'] })
+        ? res.status(200).json({ user: sanitizeUser(user.get()) })
+        : res.status(401).json({ errors: ['Unauthorized'] })
     )
-    .catch(handleError(res))
+    .catch(handleError(res, 401))
 })
 
-app.post('/register', (req, res) => {
-  const props = R.pipe(
-    R.pick(['firstName', 'lastName', 'email', 'password']),
-    R.evolve({
-      firstName: R.trim,
-      lastName: R.trim,
-      email: sanitizeEmail,
-      password: hash256
-    })
-  )(req.body)
-
-  User.create(props)
-    .then(user => (user ? res.status(201).json({ user }) : res.sendStatus(400)))
-    .catch(handleError(res))
+app.post('/register', ({ body }, res) => {
+  User.create({
+    firstName: R.trim(body.firstName),
+    lastName: R.trim(body.lastName),
+    email: sanitizeEmail(body.email),
+    password: sha256digest(body.password)
+  })
+    .then(user =>
+      user
+        ? res.status(201).json({ user: sanitizeUser(user.get()) })
+        : res.status(400).json({ errors: ['Invalid request'] })
+    )
+    .catch(handleError(res, 400))
 })
 
 app.listen(process.env.PORT)

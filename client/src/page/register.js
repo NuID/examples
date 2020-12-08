@@ -33,7 +33,7 @@ const onSubmit = R.curry(
     submitEvent.stopPropagation()
     const data = R.pick(['firstName', 'lastName', 'email', 'password'], state)
     api
-      .post('/register', data, 204)
+      .post('/register', data, 201)
       .then(res => {
         setCurrentUser(res.user)
         history.push('/dashboard')

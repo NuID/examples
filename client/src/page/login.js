@@ -31,15 +31,12 @@ const onSubmit = R.curry(
   ({ errorKey, history, state, setState, setIsAuthenticated }, submitEvent) => {
     submitEvent.preventDefault()
     submitEvent.stopPropagation()
+    const data = R.pick(['email', 'password'], state)
     api
-      .post('/login', R.props(['username', 'password'], state))
+      .post('/login', data)
       .then(res => {
-        if (res.status === 200) {
-          setIsAuthenticated(true)
-          history.push('/dashboard')
-        } else {
-          setState(R.assoc(errorKey, 'Login failed', state))
-        }
+        setIsAuthenticated(true)
+        history.push('/dashboard')
       })
       .catch(err => {
         setState(R.assoc(errorKey, `Login failed: ${err.message}`, state))
@@ -55,7 +52,7 @@ const setStateValue = R.curry((state, prop, setState, event) => {
 const LoginPage = props => {
   const [state, setState] = useState({
     error: '',
-    username: '',
+    email: '',
     password: ''
   })
   return (
@@ -67,10 +64,10 @@ const LoginPage = props => {
         >
           <div>
             <TextField
-              label='username'
-              name='username'
-              value={state.username}
-              onChange={setStateValue(state, 'username', setState)}
+              label='email'
+              name='email'
+              value={state.email}
+              onChange={setStateValue(state, 'email', setState)}
             />
           </div>
           <div>

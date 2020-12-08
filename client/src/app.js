@@ -1,13 +1,13 @@
 import React from 'react'
 import Router from './router'
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Container from '@material-ui/core/Container'
 
 const app = () => (
   <React.Fragment>
     <CssBaseline />
-    <Container maxWidth="sm">
+    <Container maxWidth='sm'>
       <Router />
     </Container>
   </React.Fragment>

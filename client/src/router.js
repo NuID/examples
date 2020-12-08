@@ -6,7 +6,7 @@ import {
   Redirect,
   Route,
   Switch
-} from "react-router-dom"
+} from 'react-router-dom'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -20,30 +20,32 @@ import Register from './page/register'
 
 export const ROUTES = {
   authenticated: [
-    {label: "Dashboard", render: Dashboard, to: "/"},
-    {label: "Logout", render: Logout, to: "/logout"},
+    { label: 'Dashboard', component: Dashboard, to: '/' },
+    { label: 'Logout', component: Logout, to: '/logout' }
   ],
   unauthenticated: [
-    {label: "Register", render: Register, to: "/register"},
-    {label: "Login", render: Login, to: "/login"},
-  ],
+    { label: 'Register', component: Register, to: '/register' },
+    { label: 'Login', component: Login, to: '/login' }
+  ]
 }
 
-const navItem = ({label, to}, index) => (
+const navItem = ({ label, to }, index) => (
   <ListItem key={`nav-${index}`} button component={NavLink} to={to}>
     <ListItemText primary={label} />
   </ListItem>
 )
 
-const routePage = ({label, render, to}, index) => (
-  <Route key={`route-${label}-${index}`} path={to} render={render} />
+const routePage = ({ component, label, to }, index) => (
+  <Route key={`route-${label}-${index}`} path={to} component={component} />
 )
 
 const indexedMap = R.addIndex(R.map)
 
 const component = props => {
   const authenticated = false // TODO get session data
-  const navRoutes = authenticated ? ROUTES.authenticated : ROUTES.unauthenticated
+  const navRoutes = authenticated
+    ? ROUTES.authenticated
+    : ROUTES.unauthenticated
   return (
     <Router>
       <header>
@@ -55,8 +57,13 @@ const component = props => {
       </header>
       <main>
         <Switch>
-          {indexedMap(routePage, R.concat(ROUTES.unauthenticated, ROUTES.authenticated))}
-          <Route path="*"><Redirect to="/" /></Route>
+          {indexedMap(
+            routePage,
+            R.concat(ROUTES.unauthenticated, ROUTES.authenticated)
+          )}
+          <Route path='*'>
+            <Redirect to='/' />
+          </Route>
         </Switch>
       </main>
     </Router>

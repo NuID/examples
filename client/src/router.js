@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as R from 'ramda'
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   NavLink,
   Redirect,
   Route,
@@ -19,15 +19,23 @@ import Logout from './page/logout'
 import Register from './page/register'
 
 export const ROUTES = {
-  authenticated: [
-    { label: 'Dashboard', component: Dashboard, to: '/' },
-    { label: 'Logout', component: Logout, to: '/logout' }
-  ],
-  unauthenticated: [
-    { label: 'Register', component: Register, to: '/register' },
-    { label: 'Login', component: Login, to: '/login' }
-  ]
+  dashboard: { label: 'Dashboard', component: Dashboard, to: '/' },
+  login: { label: 'Login', component: Login, to: '/login' },
+  logout: { label: 'Logout', component: Logout, to: '/logout' },
+  register: { label: 'Register', component: Register, to: '/register' }
 }
+
+export const NAV = {
+  authenticated: [ROUTES.dashboard, ROUTES.logout],
+  unauthenticated: [ROUTES.register, ROUTES.login]
+}
+
+export const ORDERED_PAGES = [
+  ROUTES.register,
+  ROUTES.login,
+  ROUTES.logout,
+  ROUTES.dashboard
+]
 
 const navItem = ({ label, to }, index) => (
   <ListItem key={`nav-${index}`} button component={NavLink} to={to}>
@@ -35,19 +43,23 @@ const navItem = ({ label, to }, index) => (
   </ListItem>
 )
 
-const routePage = ({ component, label, to }, index) => (
-  <Route key={`route-${label}-${index}`} path={to} component={component} />
+const routePage = R.curry(
+  (routeProps, { component: Component, label, to }, index) => (
+    <Route
+      key={`route-${label}-${index}`}
+      path={to}
+      render={props => <Component {...props} {...routeProps} />}
+    />
+  )
 )
 
 const indexedMap = R.addIndex(R.map)
 
-const component = props => {
-  const authenticated = false // TODO get session data
-  const navRoutes = authenticated
-    ? ROUTES.authenticated
-    : ROUTES.unauthenticated
+const Router = props => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const navRoutes = isAuthenticated ? NAV.authenticated : NAV.unauthenticated
   return (
-    <Router>
+    <BrowserRouter>
       <header>
         <nav>
           <Drawer anchor='left' variant='permanent'>
@@ -58,16 +70,16 @@ const component = props => {
       <main>
         <Switch>
           {indexedMap(
-            routePage,
-            R.concat(ROUTES.unauthenticated, ROUTES.authenticated)
+            routePage({ isAuthenticated, setIsAuthenticated }),
+            ORDERED_PAGES
           )}
           <Route path='*'>
             <Redirect to='/' />
           </Route>
         </Switch>
       </main>
-    </Router>
+    </BrowserRouter>
   )
 }
 
-export default component
+export default Router

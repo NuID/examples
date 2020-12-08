@@ -1,9 +1,7 @@
-import * as R from 'ramda'
-
 const url = path => `${process.env.REACT_APP_API_HOST}${path}`
 
-export const post = (path, data, status = 200, opts = {}) => {
-  const defaultOpts = {
+export const post = (path, data, status = 200) => {
+  const opts = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -11,9 +9,9 @@ export const post = (path, data, status = 200, opts = {}) => {
     },
     body: JSON.stringify(data)
   }
-  return fetch(url(path), R.merge(defaultOpts, opts)).then(res => {
+  return fetch(url(path), opts).then(res => {
     return res.status === status
       ? res.json()
-      : Promise.reject({ message: `Unexpected status ${status}`, res: res })
+      : Promise.reject({ message: `Unexpected status ${res.status}`, res: res })
   })
 }

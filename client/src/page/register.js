@@ -28,21 +28,15 @@ const styled = withStyles(theme => ({
 }))
 
 const onSubmit = R.curry(
-  ({ errorKey, history, state, setState, setIsAuthenticated }, submitEvent) => {
+  ({ errorKey, history, state, setState, setCurrentUser }, submitEvent) => {
     submitEvent.preventDefault()
     submitEvent.stopPropagation()
+    const data = R.pick(['firstName', 'lastName', 'email', 'password'], state)
     api
-      .post(
-        '/register',
-        R.props(['firstName', 'lastName', 'username', 'password'], state)
-      )
+      .post('/register', data, 204)
       .then(res => {
-        if (res.status === 200) {
-          setIsAuthenticated(true)
-          history.push('/dashboard')
-        } else {
-          setState(R.assoc(errorKey, 'Registration failed', state))
-        }
+        setCurrentUser(res.user)
+        history.push('/dashboard')
       })
       .catch(err => {
         setState(
@@ -62,7 +56,7 @@ const RegisterPage = props => {
     error: '',
     firstName: '',
     lastName: '',
-    username: '',
+    email: '',
     password: ''
   })
   return (
@@ -88,10 +82,10 @@ const RegisterPage = props => {
           </div>
           <div>
             <TextField
-              label='username'
-              name='username'
-              value={state.username}
-              onChange={setStateValue(state, 'username', setState)}
+              label='email'
+              name='email'
+              value={state.email}
+              onChange={setStateValue(state, 'email', setState)}
             />
           </div>
           <div>

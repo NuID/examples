@@ -28,14 +28,14 @@ const styled = withStyles(theme => ({
 }))
 
 const onSubmit = R.curry(
-  ({ errorKey, history, state, setState, setIsAuthenticated }, submitEvent) => {
+  ({ errorKey, history, state, setState, setCurrentUser }, submitEvent) => {
     submitEvent.preventDefault()
     submitEvent.stopPropagation()
     const data = R.pick(['email', 'password'], state)
     api
       .post('/login', data)
       .then(res => {
-        setIsAuthenticated(true)
+        setCurrentUser(res.user)
         history.push('/dashboard')
       })
       .catch(err => {

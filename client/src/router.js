@@ -56,8 +56,8 @@ const routePage = R.curry(
 const indexedMap = R.addIndex(R.map)
 
 const Router = props => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const navRoutes = isAuthenticated ? NAV.authenticated : NAV.unauthenticated
+  const [currentUser, setCurrentUser] = useState(null)
+  const navRoutes = currentUser ? NAV.authenticated : NAV.unauthenticated
   return (
     <BrowserRouter>
       <header>
@@ -70,7 +70,7 @@ const Router = props => {
       <main>
         <Switch>
           {indexedMap(
-            routePage({ isAuthenticated, setIsAuthenticated }),
+            routePage({ currentUser, setCurrentUser }),
             ORDERED_PAGES
           )}
           <Route path='*'>

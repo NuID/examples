@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import * as R from 'ramda'
 
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -21,23 +22,68 @@ const styled = withStyles(theme => ({
   }
 }))
 
-const RegisterPage = ({ classes }) => (
+const onSubmit = R.curry((state, event) => {
+  event.preventDefault()
+  event.stopPropagation()
+  console.log('SUBMIT')
+  console.log(state)
+})
+
+const setStateValue = R.curry((state, prop, setter, event) => {
+  event.preventDefault()
+  setter(R.assoc(prop, event.target.value, state))
+})
+
+const RegisterPage = ({ classes }) => {
+  const [state, setState] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    password: ''
+  })
+  console.log(state)
+  return (
   <div className={classes.root}>
     <Paper className={classes.paper}>
       <Typography variant='h3'>Register</Typography>
-      <form>
+      <form onSubmit={onSubmit(state)}>
         <div>
-          <TextField label='first name' name='firstName' />
-          <TextField label='last name' name='lastName' />
+          <TextField
+            label='first name'
+            name='firstName'
+            value={state.firstName}
+            onChange={setStateValue(state, 'firstName', setState)}
+          />
+          <TextField
+            label='last name'
+            name='lastName'
+            value={state.lastName}
+            onChange={setStateValue(state, 'lastName', setState)}
+          />
         </div>
-        <div><TextField label='username' name='username' /></div>
-        <div><TextField label='password' type='password' name='password' /></div>
+        <div>
+          <TextField
+            label='username'
+            name='username'
+            value={state.username}
+            onChange={setStateValue(state, 'username', setState)}
+          />
+        </div>
+        <div>
+          <TextField
+            label='password'
+            type='password'
+            name='password'
+            value={state.password}
+            onChange={setStateValue(state, 'password', setState)}
+          />
+        </div>
         <div className={classes.actions}>
-          <Button color='primary' variant='contained'>Register</Button>
+          <Button color='primary' variant='contained' type='submit'>Register</Button>
         </div>
       </form>
     </Paper>
   </div>
-)
+)}
 
 export default styled(RegisterPage)

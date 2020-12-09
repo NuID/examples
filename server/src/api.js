@@ -21,6 +21,9 @@ const apiGet = path =>
     res.ok ? res.json() : Promise.reject({ message: 'Failed to get data', res })
   )
 
+const bodyFromJSON = res =>
+  res.text().then(body => (R.isEmpty(body) ? {} : JSON.parse(body)))
+
 const apiPost = (path, body) =>
   fetch(`${nuidAuthApi}${path}`, {
     method: 'POST',
@@ -32,7 +35,7 @@ const apiPost = (path, body) =>
     }
   }).then(res =>
     res.ok
-      ? res.json()
+      ? bodyFromJSON(res)
       : Promise.reject({ message: 'Failed to post data', res })
   )
 

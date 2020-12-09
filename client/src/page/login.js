@@ -48,9 +48,9 @@ const onSubmit = R.curry(
   ({ errorKey, history, state, setState, setCurrentUser }, submitEvent) => {
     submitEvent.preventDefault()
     submitEvent.stopPropagation()
-    const data = R.pick(['email', 'password'], state)
     api
-      .post('/login', data)
+      .post('/challenge', { email: state.email })
+      .then(loginWithChallengeAndProof(state))
       .then(res => {
         setCurrentUser(res.user)
         history.push('/dashboard')

@@ -64,37 +64,46 @@ app.use(
   })
 )
 
-app.post('/login', ({ body }, res) => {
-  const where = {
-    email: sanitizeEmail(body.email),
-    password: sha256digest(body.password)
-  }
-
-  if (R.isEmpty(where.email) || R.isEmpty(where.password)) {
 app.post('/challenge', ({ body }, res) => {
   const email = sanitizeEmail(body.email)
   if (R.isEmpty(email)) {
     return res.status(401).json({ errors: ['Unauthorized'] })
   }
 
-  User.findOne({ where })
-    .then(user =>
-      user
-        ? res.status(200).json({ user: sanitizeUser(user.get()) })
-        : res.status(401).json({ errors: ['Unauthorized'] })
   User.findOne({ where: { email } })
-    .then(user => {
-      if (!user) {
-        Promise.reject({ errors: ['Unauthorized'] })
-      }
-      return apiGet(`/credential/${user.nuid}`)
-    })
+    .then(user =>
+      !user
+        ? Promise.reject({ errors: ['Unauthorized'] })
+        : apiGet(`/credential/${user.nuid}`)
+    )
     .then(credentialBody => apiPost('/challenge', credentialBody))
     .then(challengeBody =>
       res.status(200).json({
         challengeJwt: challengeBody['nuid.credential.challenge/jwt']
       })
     )
+    .catch(handleError(res, 401))
+})
+
+app.post('/login', ({ body }, res) => {
+  const email = sanitizeEmail(body.email)
+  if (R.any(R.isEmpty, [email, body.challengeJwt, body.proof])) {
+    return res.status(401).json({ errors: ['Unauthorized 1'] })
+  }
+
+  User.findOne({ where: { email } })
+    .then(user => {
+      if (!user) {
+        return Promise.reject({ errors: ['Unauthorized 2'] })
+      }
+
+      return apiPost('/challenge/verify', {
+        'nuid.credential.challenge/jwt': body.challengeJwt,
+        'nuid.credential/proof': body.proof
+      }).then(verifyRes =>
+        res.status(200).json({ user: sanitizeUser(user.get()) })
+      )
+    })
     .catch(handleError(res, 401))
 })
 
@@ -115,6 +124,10 @@ const registerUser = body =>
 
 app.post('/register', ({ body }, res) => {
   const email = sanitizeEmail(body.email)
+  if (R.isEmpty(email)) {
+    return res.status(400).json({ errors: ['Invalid Request'] })
+  }
+
   User.count({ where: { email } })
     .then(count => {
       return count === 0

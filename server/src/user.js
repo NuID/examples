@@ -11,7 +11,8 @@ const User = sequelize.define(
     firstName: { type: DataTypes.STRING, allowNull: false },
     lastName: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    password: { type: DataTypes.TEXT, allowNull: false }
+    password: { type: DataTypes.TEXT, allowNull: true }, // TODO remove column after migration
+    nuid: { type: DataTypes.TEXT, allowNull: true } // TODO disallow null after migration
   },
   {}
 )

@@ -14,6 +14,9 @@ const styled = withStyles(theme => ({
     margin: theme.spacing(4),
     padding: theme.spacing(2),
     width: '100%'
+  },
+  nuid: {
+    overflowWrap: 'anywhere'
   }
 }))
 
@@ -31,6 +34,10 @@ const DashboardPage = props => {
         </p>
         <p>
           <strong>Email:</strong> {props.currentUser.email}
+        </p>
+        <p>
+          <strong>NuID:</strong>{' '}
+          <code className={props.classes.nuid}>{props.currentUser.nuid}</code>
         </p>
         <p>
           <strong>Account Created:</strong> {props.currentUser.createdAt}

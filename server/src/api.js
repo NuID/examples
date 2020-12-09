@@ -71,6 +71,9 @@ app.post('/login', ({ body }, res) => {
   }
 
   if (R.isEmpty(where.email) || R.isEmpty(where.password)) {
+app.post('/challenge', ({ body }, res) => {
+  const email = sanitizeEmail(body.email)
+  if (R.isEmpty(email)) {
     return res.status(401).json({ errors: ['Unauthorized'] })
   }
 
@@ -79,6 +82,18 @@ app.post('/login', ({ body }, res) => {
       user
         ? res.status(200).json({ user: sanitizeUser(user.get()) })
         : res.status(401).json({ errors: ['Unauthorized'] })
+  User.findOne({ where: { email } })
+    .then(user => {
+      if (!user) {
+        Promise.reject({ errors: ['Unauthorized'] })
+      }
+      return apiGet(`/credential/${user.nuid}`)
+    })
+    .then(credentialBody => apiPost('/challenge', credentialBody))
+    .then(challengeBody =>
+      res.status(200).json({
+        challengeJwt: challengeBody['nuid.credential.challenge/jwt']
+      })
     )
     .catch(handleError(res, 401))
 })

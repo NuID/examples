@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import * as R from 'ramda'
+import Zk from '@nuid/zk'
 
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -26,6 +27,22 @@ const styled = withStyles(theme => ({
     color: 'red'
   }
 }))
+
+const decodeJwt = jwt => {
+  const payloadBase64 = jwt.split('.')[1]
+  const json = Buffer.from(payloadBase64, 'base64').toString()
+  return JSON.parse(json)
+}
+
+const loginWithChallengeAndProof = R.curry((state, challengeRes) => {
+  const challenge = decodeJwt(challengeRes.challengeJwt)
+  const proof = Zk.proofFromSecretAndChallenge(state.password, challenge)
+  return api.post('/login', {
+    email: state.email,
+    challengeJwt: challengeRes.challengeJwt,
+    proof
+  })
+})
 
 const onSubmit = R.curry(
   ({ errorKey, history, state, setState, setCurrentUser }, submitEvent) => {

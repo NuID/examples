@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import * as R from 'ramda'
+import Zk from '@nuid/zk'
 
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -31,7 +32,11 @@ const onSubmit = R.curry(
   ({ errorKey, history, state, setState, setCurrentUser }, submitEvent) => {
     submitEvent.preventDefault()
     submitEvent.stopPropagation()
-    const data = R.pick(['firstName', 'lastName', 'email', 'password'], state)
+    const data = R.pipe(
+      R.pick(['firstName', 'lastName', 'email']),
+      R.assoc('credential', Zk.verifiableFromSecret(state.password))
+    )(state)
+
     api
       .post('/register', data, 201)
       .then(res => {

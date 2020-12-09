@@ -80,18 +80,34 @@ app.post('/login', ({ body }, res) => {
     .catch(handleError(res, 401))
 })
 
+const registerNuid = credential =>
+  apiPost('/credential', { 'nuid.credential/verified': credential }).then(
+    body => body['nu/id']
+  )
+
+const registerUser = body =>
+  registerNuid(body.credential).then(nuid =>
+    User.create({
+      firstName: R.trim(body.firstName),
+      lastName: R.trim(body.lastName),
+      email: sanitizeEmail(body.email),
+      nuid
+    })
+  )
+
 app.post('/register', ({ body }, res) => {
-  User.create({
-    firstName: R.trim(body.firstName),
-    lastName: R.trim(body.lastName),
-    email: sanitizeEmail(body.email),
-    password: sha256digest(body.password)
-  })
-    .then(user =>
-      user
+  const email = sanitizeEmail(body.email)
+  User.count({ where: { email } })
+    .then(count => {
+      return count === 0
+        ? registerUser(body)
+        : Promise.reject({ message: 'Email address already taken' })
+    })
+    .then(user => {
+      return user
         ? res.status(201).json({ user: sanitizeUser(user.get()) })
         : res.status(400).json({ errors: ['Invalid request'] })
-    )
+    })
     .catch(handleError(res, 400))
 })
 

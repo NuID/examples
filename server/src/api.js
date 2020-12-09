@@ -3,10 +3,39 @@ const R = require('ramda')
 const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const fetch = require('node-fetch')
+const Zk = require('@nuid/zk')
 const { User } = require('./user')
 
 const nuidAuthApi = 'https://auth.nuid.io'
 const nuidApiKey = process.env.NUID_API_KEY
+
+const apiGet = path =>
+  fetch(`${nuidAuthApi}${path}`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'X-API-Key': nuidApiKey
+    }
+  }).then(res =>
+    res.ok ? res.json() : Promise.reject({ message: 'Failed to get data', res })
+  )
+
+const apiPost = (path, body) =>
+  fetch(`${nuidAuthApi}${path}`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-API-Key': nuidApiKey
+    }
+  }).then(res =>
+    res.ok
+      ? res.json()
+      : Promise.reject({ message: 'Failed to post data', res })
+  )
+
 const sha256digest = data =>
   crypto
     .createHash('sha256')

@@ -2,7 +2,9 @@ client:
 	cd client && REACT_APP_API_HOST=http://localhost:4001 npm start
 
 server:
-	PORT=4001 ./node_modules/.bin/nodemon server/src/api.js
+	NUID_API_KEY="tAyGxJVZT26aQhPJQfVlq3f90HnUxZAu9Ojr3cwG" \
+		PORT=4001 \
+		./node_modules/.bin/nodemon server/src/api.js
 
 format:
 	prettier-standard ./{client,server}/src/**/*.js

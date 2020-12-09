@@ -5,6 +5,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const { User } = require('./user')
 
+const nuidAuthApi = 'https://auth.nuid.io'
+const nuidApiKey = process.env.NUID_API_KEY
 const sha256digest = data =>
   crypto
     .createHash('sha256')

@@ -5,39 +5,10 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const fetch = require('node-fetch')
 const Zk = require('@nuid/zk')
+const nuidApi = require('@nuid/sdk-nodejs').default({
+  auth: { apiKey: process.env.NUID_API_KEY }
+})
 const { User } = require('./user')
-
-const nuidAuthApi = 'https://auth.nuid.io'
-const nuidApiKey = process.env.NUID_API_KEY
-
-const apiGet = path =>
-  fetch(`${nuidAuthApi}${path}`, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'X-API-Key': nuidApiKey
-    }
-  }).then(res =>
-    res.ok ? res.json() : Promise.reject({ message: 'Failed to get data', res })
-  )
-
-const bodyFromJSON = res =>
-  res.text().then(body => (R.isEmpty(body) ? {} : JSON.parse(body)))
-
-const apiPost = (path, body) =>
-  fetch(`${nuidAuthApi}${path}`, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'X-API-Key': nuidApiKey
-    }
-  }).then(res =>
-    res.ok
-      ? bodyFromJSON(res)
-      : Promise.reject({ message: 'Failed to post data', res })
-  )
 
 const sha256digest = data =>
   crypto
@@ -74,9 +45,9 @@ app.post('/challenge', ({ body }, res) => {
     .then(user =>
       !user
         ? Promise.reject({ errors: ['Unauthorized'] })
-        : apiGet(`/credential/${user.nuid}`)
+          : nuidApi.auth.credentialGet(user.nuid)
     )
-    .then(credentialBody => apiPost('/challenge', credentialBody))
+    .then(nuidApi.auth.challengeGet)
     .then(challengeBody =>
       res.status(200).json({
         challengeJwt: challengeBody['nuid.credential.challenge/jwt']
@@ -97,20 +68,18 @@ app.post('/login', ({ body }, res) => {
         return Promise.reject({ errors: ['Unauthorized 2'] })
       }
 
-      return apiPost('/challenge/verify', {
-        'nuid.credential.challenge/jwt': body.challengeJwt,
-        'nuid.credential/proof': body.proof
-      }).then(verifyRes =>
-        res.status(200).json({ user: sanitizeUser(user.get()) })
-      )
+      const { challengeJwt, proof } = body
+      return nuidApi.auth
+        .challengeVerify(challengeJwt, proof)
+        .then(verifyRes => res.status(200).json({
+          user: sanitizeUser(user.get())
+        }))
     })
     .catch(handleError(res, 401))
 })
 
 const registerNuid = credential =>
-  apiPost('/credential', { 'nuid.credential/verified': credential }).then(
-    body => body['nu/id']
-  )
+  nuidApi.auth.credentialCreate(credential).then(R.prop('nu/id'))
 
 const registerUser = body =>
   registerNuid(body.credential).then(nuid =>

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@nuid/sdk-nodejs": "^0.1.0",
     "@nuid/zk": "^0.1.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",

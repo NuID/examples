@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@nuid/sdk-nodejs": "^0.1.0",
+    "@nuid/zk": "^0.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "ramda": "^0.27.1",
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0"
+  }
+}

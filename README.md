@@ -1,3 +1,5 @@
+<p align="right"><a href="https://nuid.io"><img src="https://nuid.io/svg/logo.svg" width="20%"></a></p>
+
 # NuID Node Example Application
 
 Provided here is an example of a Node.js+React application that initially uses

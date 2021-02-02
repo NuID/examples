@@ -3,10 +3,10 @@
  *
  * ```sh
  * $ git clone https://github.com/NuID/examples.git
- * $ cd examples
+ * $ cd examples/js-node
  * $ npm install
  * $ node
- * > const example = require('./js-node/zk-usage');
+ * > const example = require('./zk-usage');
  * > example('YOUR-API-KEY-HERE').then(status => console.log(status));
  * ```
  */

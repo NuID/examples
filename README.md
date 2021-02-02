@@ -1,22 +1,58 @@
 <p align="right"><a href="https://nuid.io"><img src="https://nuid.io/svg/logo.svg" width="20%"></a></p>
 
-# NuID Node Example Application
+# NuID :: Examples
+
+This repository contains examples of interacting with various NuID
+libraries, packages, and APIs across various languages, libraries, and
+frameworks. The examples provided here are meant to suplement the official
+documentation found at NuID's [Developer Portal](https://portal.nuid.io).
+
+## Prerequisites
+
+If you want to run some of these examples, you'll generally need the following:
+
+* [`node & npm`](https://nodejs.org/) (tested on v12.16.3 LTS)
+* An API Key (freely available at the [portal](https://portal.nuid.io))
+* [`make`](https://www.gnu.org/software/make/)
+
+## Usage
+
+```bash
+$ git clone https://github.com/NuID/examples.git
+$ cd examples
+
+# start target will fetch all necessary dependencies
+$ NUID_API_KEY="<your api key>" client=js-react server=js-node make start
+```
+
+As we add new examples for other languages you'll be able to change
+`server=<folder>` or `client=<folder>` to whichever example you wish to run.
+
+## Documentation
+
+Lots of the code in each example has been commented, but more documentation can
+be found on the [portal](https://portal.nuid.io). We're constantly updating the
+docs with guides, videos, and language reference.
+
+## Contact
+
+[Get in touch](https://portal.nuid.io/support) with any questions or feedback at
+[support@nuid.io](support@nuid.io). We'd love to hear from you.
+
+---
+
+# `js-react` + `js-node` example
 
 Provided here is an example of a Node.js+React application that initially uses
 password hashing for authentication. Over the course of four tagged commits
 we'll show how to convert from password hashing to using NuID for credential
 management, all without changing your login+registration UX.
 
-## Install and Run
-
-The `run` make target will watch both the client and server src directories
-and reload their start scripts on change. You can find your API Key after
-logging into your free [NuID Portal](https://portal.nuid.io/dashboard) account.
-
-``` sh
-npm install
-NUID_API_KEY="<your key here>" make run
-```
+Note: This repo's directory structure has changed since these tagged commits,
+just be aware you'll only see a `client` and `server` directory instead of
+`js-react` and `js-node` respectively (along with any other language examples
+that will be added later). Checking out the `main` branch at any time will
+get you back to the most recent examples available.
 
 ## Overview of NuID
 

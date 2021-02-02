@@ -18,10 +18,11 @@ If you want to run some of these examples, you'll generally need the following:
 ## Usage
 
 ```bash
-git clone https://github.com/NuID/examples.git
-cd examples
-npm install
-NUID_API_KEY="<your api key>" client=js-react server=js-node make start 
+$ git clone https://github.com/NuID/examples.git
+$ cd examples
+
+# start target will fetch all necessary dependencies
+$ NUID_API_KEY="<your api key>" client=js-react server=js-node make start
 ```
 
 As we add new examples for other languages you'll be able to change

@@ -5,6 +5,17 @@ password hashing for authentication. Over the course of four tagged commits
 we'll show how to convert from password hashing to using NuID for credential
 management, all without changing your login+registration UX.
 
+## Install and Run
+
+The `run` make target will watch both the client and server src directories
+and reload their start scripts on change. You can find your API Key after
+logging into your free [NuID Portal](https://portal.nuid.io/dashboard) account.
+
+``` sh
+npm install
+NUID_API_KEY="<your key here>" make run
+```
+
 ## Overview of NuID
 
 - Trustless authentication using Zero-Knowledge proofs.

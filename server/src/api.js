@@ -5,8 +5,14 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const fetch = require('node-fetch')
 const Zk = require('@nuid/zk')
+
+const nuidApiKey = process.env.NUID_API_KEY
+if (R.isEmpty(nuidApiKey)) {
+  throw new Error('NUID_API_KEY is missing from env')
+}
+
 const nuidApi = require('@nuid/sdk-nodejs').default({
-  auth: { apiKey: process.env.NUID_API_KEY }
+  auth: { apiKey: nuidApiKey }
 })
 const { User } = require('./user')
 
@@ -45,7 +51,7 @@ app.post('/challenge', ({ body }, res) => {
     .then(user =>
       !user
         ? Promise.reject({ errors: ['Unauthorized'] })
-          : nuidApi.auth.credentialGet(user.nuid)
+        : nuidApi.auth.credentialGet(user.nuid)
     )
     .then(nuidApi.auth.challengeGet)
     .then(challengeBody =>
@@ -69,11 +75,11 @@ app.post('/login', ({ body }, res) => {
       }
 
       const { challengeJwt, proof } = body
-      return nuidApi.auth
-        .challengeVerify(challengeJwt, proof)
-        .then(verifyRes => res.status(200).json({
+      return nuidApi.auth.challengeVerify(challengeJwt, proof).then(verifyRes =>
+        res.status(200).json({
           user: sanitizeUser(user.get())
-        }))
+        })
+      )
     })
     .catch(handleError(res, 401))
 })

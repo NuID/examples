@@ -1,6 +1,14 @@
 client="js-react"
 server="js-node"
 
+go: go.watch
+
+go.watch:
+	watcher -cmd="make go.run" -keepalive -list -startcmd go/
+
+go.run:
+	cd go && go get && PORT=4001 go run .
+
 js-react/node_modules:
 	cd js-react && npm install
 
@@ -29,4 +37,4 @@ start: node_modules
 		-c "magenta.bold,green.bold" \
 		"make $(client)" "make $(server)"
 
-.PHONY: format js-react js-node start
+.PHONY: format go js-react js-node start

@@ -1,12 +1,9 @@
-# NuID :: React.js Example
+# NuID :: Node.js Example
 
-This project was bootstrapped with [Create React
-App](https://github.com/facebook/create-react-app).
-
-The code here is meant to show an example application which has user
-registration and login flows. It will communicate with any backend listening at
-`PORT=4001`. See the parent README for a list of supported client and server
-examples.
+This example shows a fully working approach to interacting with the NuID Auth
+API during your registration and login flows. The example uses the [NuID Node.js
+SDK](https://github.com/NuID/sdk-nodejs) package (read the [package
+docs](http://libdocs.s3-website-us-east-1.amazonaws.com/sdk-nodejs/v0.1.0/)).
 
 The examples provided here are meant to suplement the official
 documentation found at NuID's [Developer Portal](https://portal.nuid.io).
@@ -22,5 +19,5 @@ $ cd examples
 $ export NUID_API_KEY="<your api key>"
 
 # the start target will fetch all necessary dependencies
-$ make start client=js-react
+$ make start server=js-node
 ```

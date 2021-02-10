@@ -18,21 +18,41 @@ If you want to run some of these examples, you'll generally need the following:
 ## Usage
 
 ```bash
+# Fetch the code
 $ git clone https://github.com/NuID/examples.git
 $ cd examples
 
-# start target will fetch all necessary dependencies
-$ NUID_API_KEY="<your api key>" client=js-react server=js-node make start
+# All servers will need an API Key to talk to the API
+$ export NUID_API_KEY="<your api key>"
+
+# the start target will fetch all necessary dependencies
+# use client=js-react and server=js-node defaults
+$ make start
+
+# optionally set the client or server examples to use
+# see below for supported clients and servers
+$ make start server=go
 ```
 
 As we add new examples for other languages you'll be able to change
 `server=<folder>` or `client=<folder>` to whichever example you wish to run.
 
+### Supported examples
+
+#### `client=<lang>`
+
++ `js-react` (default) - `make start` or `make start client=js-react`
+
+#### `server=<lang>`
+
++ `js-node` (default) - `make start` or `make start server=js-node`
++ `go` - `make start server=go`
+
 ## Documentation
 
 Lots of the code in each example has been commented, but more documentation can
-be found on the [portal](https://portal.nuid.io). We're constantly updating the
-docs with guides, videos, and language reference.
+be found on the [portal](https://portal.nuid.io/docs). We're constantly updating
+the docs with guides, videos, and language reference.
 
 ## Contact
 
@@ -48,11 +68,11 @@ password hashing for authentication. Over the course of four tagged commits
 we'll show how to convert from password hashing to using NuID for credential
 management, all without changing your login+registration UX.
 
-Note: This repo's directory structure has changed since these tagged commits,
-just be aware you'll only see a `client` and `server` directory instead of
-`js-react` and `js-node` respectively (along with any other language examples
-that will be added later). Checking out the `main` branch at any time will
-get you back to the most recent examples available.
+Note: This repo's directory structure has changed since the tagged commits
+linked below, just be aware you'll only see a `client` and `server` directory
+instead of `js-react` and `js-node` respectively (along with any other language
+examples that will be added later). Checking out the `main` branch at any time
+will get you back to the most recent examples available.
 
 ## Overview of NuID
 

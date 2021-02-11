@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
   def challenge
-    logger.info(params.inspect)
     user = User.where(email: params[:email].strip.downcase).first
     return render_error("User not found", :unauthorized) unless user
 

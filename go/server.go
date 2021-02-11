@@ -17,26 +17,22 @@ type ErrorRes struct {
 	Errors []string `json:"errors"`
 }
 
-type Context struct {
+type Server struct {
 	db *gorm.DB
 	api *auth.APIClient
 }
 
-var ctx *Context
-
-func init() {
-	fmt.Println("Initializing...")
-	ctx = &Context{
-		api: auth.NewAPIClient(os.Getenv("NUID_API_KEY")),
-		db: initDB(),
-	}
-}
-
 func main() {
+	fmt.Println("Initializing...")
+	srv := &Server{
+		api: auth.NewAPIClient(os.Getenv("NUID_API_KEY")),
+		db: initDB(), // see user.go
+	}
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/register", handleRegister)
-	mux.HandleFunc("/challenge", handleChallenge)
-	mux.HandleFunc("/login", handleLogin)
+	mux.HandleFunc("/register", srv.registerHandler)   // see register.go
+	mux.HandleFunc("/challenge", srv.challengeHandler) // see challenge.go
+	mux.HandleFunc("/login", srv.loginHandler)         // see login.go
 
 	port := os.Getenv("PORT")
 	addr := "127.0.0.1:" + port

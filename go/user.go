@@ -28,9 +28,9 @@ func initDB() *gorm.DB {
 	return db
 }
 
-func (ctx *Context) FindByEmail(email string) (user *User, err error) {
+func (srv *Server) FindByEmail(email string) (user *User, err error) {
 	user = &User{}
-	res := ctx.db.Where(&User{Email: email}).First(user)
+	res := srv.db.Where(&User{Email: email}).First(user)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = errors.New("User not found")
 	}

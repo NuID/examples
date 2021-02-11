@@ -18,7 +18,7 @@ type LoginRes struct {
 	 User *User `json:"user"`
 }
 
-func handleLogin(res http.ResponseWriter, req *http.Request) {
+func (srv *Server) loginHandler(res http.ResponseWriter, req *http.Request) {
 	defer func() {
         if err := recover(); err != nil {
             fmt.Printf("Caught panic: %v\n", err)
@@ -44,13 +44,13 @@ func handleLogin(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := ctx.FindByEmail(email)
+	user, err := srv.FindByEmail(email)
 	if err != nil || user == nil {
 		requestFailed(res, 401, "Unauthorized")
 		return
 	}
 
-	_, err = ctx.api.ChallengeVerify(body.ChallengeJWT, body.Proof)
+	_, err = srv.api.ChallengeVerify(body.ChallengeJWT, body.Proof)
 	if err != nil {
 		requestFailed(res, 401, "Unauthorized")
 		return

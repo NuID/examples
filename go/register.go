@@ -17,7 +17,7 @@ type RegistrationRes struct {
 	User *User `json:"user"`
 }
 
-func handleRegister(res http.ResponseWriter, req *http.Request) {
+func (srv *Server) registerHandler(res http.ResponseWriter, req *http.Request) {
 	defer func() {
         if err := recover(); err != nil {
             fmt.Printf("Caught panic: %v\n", err)
@@ -43,13 +43,13 @@ func handleRegister(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err = ctx.FindByEmail(email)
+	_, err = srv.FindByEmail(email)
 	if err == nil {
 		requestFailed(res, 400, "Email address already in use")
 		return
 	}
 
-	createCredRes, credentialBody, err := ctx.api.CredentialCreate(body.Credential)
+	createCredRes, credentialBody, err := srv.api.CredentialCreate(body.Credential)
 	if createCredRes.StatusCode != 201 {
 		requestFailed(res, 500, "Unable to create credential")
 		return
@@ -61,7 +61,7 @@ func handleRegister(res http.ResponseWriter, req *http.Request) {
 		FirstName: body.FirstName,
 		LastName: body.LastName,
 	}
-	dbRes := ctx.db.Create(user)
+	dbRes := srv.db.Create(user)
 	if dbRes.RowsAffected != 1 {
 		requestFailed(res, 500, "Unable to create user")
 		return

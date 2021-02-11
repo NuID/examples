@@ -45,8 +45,9 @@ As we add new examples for other languages you'll be able to change
 
 #### `server=<lang>`
 
-+ `js-node` (default) - `make start` or `make start server=js-node`
 + `go` - `make start server=go`
++ `js-node` (default) - `make start` or `make start server=js-node`
++ `ruby-rails` - `make start server=ruby-rails`
 
 ## Documentation
 

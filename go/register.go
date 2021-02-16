@@ -49,8 +49,8 @@ func (srv *Server) registerHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	createCredRes, credentialBody, err := srv.api.CredentialCreate(body.Credential)
-	if createCredRes.StatusCode != 201 {
+	_, credentialBody, err := srv.api.CredentialCreate(body.Credential)
+	if err != nil || credentialBody == nil {
 		requestFailed(res, 500, "Unable to create credential")
 		return
 	}

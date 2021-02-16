@@ -22,9 +22,7 @@ js-node/node_modules:
 	cd js-node && npm install
 
 js-node: js-node/node_modules
-	NUID_API_KEY=$(NUID_API_KEY) \
-		PORT=$(PORT) \
-		./node_modules/.bin/nodemon js-node/src/api.js
+	PORT=$(PORT) ./node_modules/.bin/nodemon js-node/src/api.js
 
 ruby-rails.bundle:
 	cd ruby-rails && bin/bundle install

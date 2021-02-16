@@ -3,7 +3,7 @@
 This example shows a fully working approach to interacting with the NuID Auth
 API during your registration and login flows. The example uses the [NuID Node.js
 SDK](https://github.com/NuID/sdk-nodejs) package (read the [package
-docs](http://libdocs.s3-website-us-east-1.amazonaws.com/sdk-nodejs/v0.1.0/)).
+docs](http://libdocs.s3-website-us-east-1.amazonaws.com/sdk-nodejs/)).
 
 The examples provided here are meant to suplement the official
 documentation found at NuID's [Developer Portal](https://portal.nuid.io).

@@ -1,20 +1,18 @@
-const express = require('express')
-const R = require('ramda')
-const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const crypto = require('crypto')
+const express = require('express')
 const fetch = require('node-fetch')
+const R = require('ramda')
 const Zk = require('@nuid/zk')
-
-const nuidApiKey = process.env.NUID_API_KEY
-if (R.isEmpty(nuidApiKey)) {
-  throw new Error('NUID_API_KEY is missing from env')
-}
-
-const nuidApi = require('@nuid/sdk-nodejs').default({
-  auth: { apiKey: nuidApiKey }
-})
 const { User } = require('./user')
+
+const authConfig = { apiKey: process.env.NUID_API_KEY }
+const host = process.env.NUID_API_HOST
+if (!R.isEmpty(host)) {
+  authConfig.host = host
+}
+const nuidApi = require('@nuid/sdk-nodejs').default({ auth: authConfig })
 
 const sha256digest = data =>
   crypto
@@ -53,10 +51,13 @@ app.post('/challenge', ({ body }, res) => {
         ? Promise.reject({ errors: ['Unauthorized'] })
         : nuidApi.auth.credentialGet(user.nuid)
     )
-    .then(nuidApi.auth.challengeGet)
-    .then(challengeBody =>
+    .then(credentialRes => {
+      const credential = credentialRes.parsedBody['nuid/credential']
+      return nuidApi.auth.challengeGet(credential)
+    })
+    .then(({ parsedBody }) =>
       res.status(200).json({
-        challengeJwt: challengeBody['nuid.credential.challenge/jwt']
+        challengeJwt: parsedBody['nuid.credential.challenge/jwt']
       })
     )
     .catch(handleError(res, 401))
@@ -85,7 +86,9 @@ app.post('/login', ({ body }, res) => {
 })
 
 const registerNuid = credential =>
-  nuidApi.auth.credentialCreate(credential).then(R.prop('nu/id'))
+    nuidApi.auth
+           .credentialCreate(credential)
+           .then(res => res.parsedBody['nu/id'])
 
 const registerUser = body =>
   registerNuid(body.credential).then(nuid =>

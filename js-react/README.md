@@ -8,7 +8,7 @@ registration and login flows. It will communicate with any backend listening at
 `PORT=4001`. See the parent README for a list of supported client and server
 examples.
 
-The examples provided here are meant to suplement the official
+The examples provided here are meant to supplement the official
 documentation found at NuID's [Developer Portal](https://portal.nuid.io).
 
 ## Usage

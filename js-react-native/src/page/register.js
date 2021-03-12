@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, StyleSheet, Text, View } from 'react-native'
 import { withRouter } from 'react-router-native'
 import * as R from 'ramda'
-import Zk from '@nuid/zk'
+import Zk from '@nuid/zk-react-native'
 import * as api from '../api'
 import Input from '../component/input'
 

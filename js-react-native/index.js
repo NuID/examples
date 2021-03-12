@@ -1,7 +1,6 @@
+import 'node-libs-react-native/globals';
 import { registerRootComponent } from 'expo';
 
-import './shim'
-import crypto from 'crypto'
 import App from './src/app';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

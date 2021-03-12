@@ -20,16 +20,12 @@ js-react-native/.env:
 js-react-native/ios/Pods:
 	cd js-react-native/ios && pod install
 
-js-react-native/ios: js-react-native/.env js-react-native/node_modules js-react-native/shim.js js-react-native/ios/Pods
+js-react-native/ios: js-react-native/.env js-react-native/node_modules js-react-native/ios/Pods
 	cd js-react-native && \
 		yarn ios &
 
 js-react-native/node_modules:
 	cd js-react-native && yarn
-
-js-react-native/shim.js: js-react-native/node_modules
-	cd js-react-native && \
-		./node_modules/.bin/rn-nodeify --hack --install
 
 js-react-native: js-react-native/ios
 

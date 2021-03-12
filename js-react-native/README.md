@@ -25,47 +25,54 @@ $ export NUID_API_KEY="<your api key>"
 $ make start client=js-react-native/ios
 ```
 
-## Native support for `@nuid/zk`
+## Installing into an existing react-native app
 
-NuID doesn't currently have a `zk` package with direct native support, so you'll
-need to do a few additional steps to add some polyfills for some missing
-dependencies.
+`react-native` doesn't have a perfect hardware interop, so you'll need
+to do a few additional steps to get the `zk` package with dependant polyfills
+installed correctly.
 
 The following is from
-[tradle/react-native-crypto](https://github.com/tradle/react-native-crypto) on
-GitHub, copied here in case the instructions change in the future. Note that
-this process will add a _lot_ of new dependencies for polyfills. It's likely you
-don't need all or even most of these libraries. This is a temporary solution
-while we work on a fully native supported `zk` library.
+[parshap/node-libs-react-native](https://github.com/parshap/node-libs-react-native) on
+GitHub.
 
-> Because this module depends on some node core modules, and react-native doesn't currently have a [resolve.alias a la webpack](https://productpains.com/post/react-native/packager-support-resolvealias-ala-webpack), you will need to use [rn-nodeify](https://github.com/tradle/rn-nodeify) for your shimming needs.
+1. First you'll need to install a few dependencies:
+  1. Install a `@nuid/zk-react-native` instead of `@nuid/zk`. This is a
+     react-native specific version of NuID's `zk` package (which has an
+     identical JS interface to `@nuid/zk`).
+  2. You'll also need `react-native-randombytes` as a top-level dependency in
+     your app so that react-native will link it correctly.
+  3. And finally, `node-libs-react-native` for shimming node dependencies in
+     react-native which is necessary to support zk credential and proof
+     generation.
 
-> A suggested workflow:
+```sh
+$ yarn add @nuid/zk-react-native node-libs-react-native react-native-randombytes
+# if RN < 0.60
+$ react-native link react-native-randombytes
+# else RN >= 0.60, instead do
+$ cd iOS && pod install
+```
 
-> 1. Install
+2. Modify `metro.config.js` to add `extraNodeModules` configuration to wire up
+   `node-libs-react-native` correctly:
 
-  ```sh
-  npm i --save react-native-crypto
-  # install peer deps
-  npm i --save react-native-randombytes
-  react-native link react-native-randombytes # on RN >= 0.60, instead do: cd iOS && pod install
-  # install latest rn-nodeify
-  npm i --save-dev rn-nodeify
-  # install node core shims and recursively hack package.json files
-  # in ./node_modules to add/update the "browser"/"react-native" field with relevant mappings
-  ./node_modules/.bin/rn-nodeify --hack --install
-  ```
+```js
+// metro.config.js
+module.exports = {
+  // ...
+  resolver: {
+    extraNodeModules: require('node-libs-react-native')
+  }
+};
+```
 
-> 2. `rn-nodeify` will create a `shim.js` in the project root directory
+3. Import `node-libs-react-native/globals` before you import `@nuid/zk-react-native`:
 
-  ```js
-  // index.js
-  // make sure you use `import` and not require!  
-  import './shim.js'
-  import crypto from 'crypto'
-  // ...the rest of your code
-  ```
-
-### Example
-
-See https://github.com/mvayngrib/rncryptoexample for an example implementation.
+``` js
+// index.js
+// Add globals here (or anywhere _before_ importing @nuid/zk-react-native)
+import 'node-libs-react-native/globals';
+import { registerRootComponent } from 'expo';
+import App from './src/app';
+registerRootComponent(App);
+```

@@ -36,12 +36,12 @@ The following is from
 GitHub.
 
 1. First you'll need to install a few dependencies:
-  1. Install a `@nuid/zk-react-native` instead of `@nuid/zk`. This is a
+   + Install the `@nuid/zk-react-native` package  instead of `@nuid/zk`. This is a
      react-native specific version of NuID's `zk` package (which has an
      identical JS interface to `@nuid/zk`).
-  2. You'll also need `react-native-randombytes` as a top-level dependency in
+   + You'll also need `react-native-randombytes` as a top-level dependency in
      your app so that react-native will link it correctly.
-  3. And finally, `node-libs-react-native` for shimming node dependencies in
+   + And finally, `node-libs-react-native` for shimming node dependencies in
      react-native which is necessary to support zk credential and proof
      generation.
 

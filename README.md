@@ -42,11 +42,13 @@ As we add new examples for other languages you'll be able to change
 #### `client=<lang>`
 
 + `js-react` (default) - `make start` or `make start client=js-react`
++ `js-react-native` - `make start client=js-react-native`
 
 #### `server=<lang>`
 
-+ `go` - `make start server=go`
 + `js-node` (default) - `make start` or `make start server=js-node`
++ `clojure-ring` - `make start server=clojure-ring`
++ `go` - `make start server=go`
 + `ruby-rails` - `make start server=ruby-rails`
 
 ## Documentation

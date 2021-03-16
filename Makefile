@@ -2,6 +2,8 @@ PORT   = "4001"
 client = "js-react"
 server = "js-node"
 
+include clojure-ring/Makefile
+
 ## CLIENT :: js-react
 
 js-react/node_modules:

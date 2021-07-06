@@ -76,7 +76,8 @@ app.post('/login', ({ body }, res) => {
       }
 
       const { challengeJwt, proof } = body
-      return nuidApi.auth.challengeVerify(challengeJwt, proof).then(verifyRes =>
+      const proofFmt = R.pick(['nuid.zk.knizk/c', 'nuid.zk.knizk/s'], proof)
+      return nuidApi.auth.challengeVerify(challengeJwt, proofFmt).then(verifyRes =>
         res.status(200).json({
           user: sanitizeUser(user.get())
         })
